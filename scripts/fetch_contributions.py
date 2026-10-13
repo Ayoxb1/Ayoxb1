@@ -3,9 +3,8 @@
 Scrape real daily contribution counts from GitHub's public contributions endpoint:
 https://github.com/users/<username>/contributions
 
-No personal access token or GraphQL API needed — parses the public HTML calendar fragment.
+With automated fallback to the jogruber public API and existing local snapshot.
 Writes data/contributions.json with raw days + calculated streaks & monthly totals.
-Auto-refreshed daily by GitHub Actions.
 """
 import datetime
 import json
@@ -18,36 +17,65 @@ from bs4 import BeautifulSoup
 
 USERNAME = os.environ.get("GH_PROFILE_USER", "Ayoxb1")
 URL = f"https://github.com/users/{USERNAME}/contributions"
+FALLBACK_API = f"https://github-contributions-api.jogruber.de/v4/{USERNAME}?y=last"
 OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "contributions.json")
 
 
 def fetch_days():
-    resp = requests.get(URL, headers={"User-Agent": "profile-readme-bot/1.0"}, timeout=30)
-    resp.raise_for_status()
-    soup = BeautifulSoup(resp.text, "html.parser")
+    # 1. Try public GitHub HTML endpoint
+    try:
+        resp = requests.get(
+            URL,
+            headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+                "Accept-Language": "en-US,en;q=0.9",
+            },
+            timeout=25,
+        )
+        if resp.status_code == 200:
+            soup = BeautifulSoup(resp.text, "html.parser")
+            cells = soup.select("td.ContributionCalendar-day")
+            if cells:
+                days = []
+                for td in cells:
+                    date = td.get("data-date")
+                    if not date:
+                        continue
+                    td_id = td.get("id")
+                    tooltip_el = soup.find("tool-tip", attrs={"for": td_id}) if td_id else None
+                    text = tooltip_el.get_text(strip=True) if tooltip_el else ""
+                    if re.search(r"no contributions", text, re.I):
+                        count = 0
+                    else:
+                        m = re.match(r"(\d+)", text)
+                        count = int(m.group(1)) if m else 0
+                    days.append({"date": date, "count": count, "level": int(td.get("data-level") or 0)})
+                days.sort(key=lambda d: d["date"])
+                return days
+    except Exception as e:
+        print(f"Warning: HTML scrape failed ({e}), trying fallback API...", file=sys.stderr)
 
-    cells = soup.select("td.ContributionCalendar-day")
-    if not cells:
-        print("no calendar cells found -- github markup may have changed", file=sys.stderr)
-        sys.exit(1)
+    # 2. Try fallback public contributions API
+    try:
+        resp2 = requests.get(FALLBACK_API, timeout=25)
+        if resp2.status_code == 200:
+            data = resp2.json()
+            contribs = data.get("contributions", [])
+            if contribs:
+                days = [{"date": c["date"], "count": c["count"], "level": c.get("level", 0)} for c in contribs]
+                days.sort(key=lambda d: d["date"])
+                return days
+    except Exception as e:
+        print(f"Warning: Fallback API failed ({e}), checking local cache...", file=sys.stderr)
 
-    days = []
-    for td in cells:
-        date = td.get("data-date")
-        if not date:
-            continue
-        td_id = td.get("id")
-        tooltip_el = soup.find("tool-tip", attrs={"for": td_id}) if td_id else None
-        text = tooltip_el.get_text(strip=True) if tooltip_el else ""
-        if re.search(r"no contributions", text, re.I):
-            count = 0
-        else:
-            m = re.match(r"(\d+)", text)
-            count = int(m.group(1)) if m else 0
-        days.append({"date": date, "count": count, "level": int(td.get("data-level") or 0)})
+    # 3. Fallback to existing local snapshot
+    if os.path.exists(OUT_PATH):
+        print("Using existing local contributions snapshot.", file=sys.stderr)
+        existing = json.load(open(OUT_PATH, encoding="utf-8"))
+        return existing["days"]
 
-    days.sort(key=lambda d: d["date"])
-    return days
+    print("Error: Could not retrieve contributions data from any source.", file=sys.stderr)
+    sys.exit(1)
 
 
 def compute_current_streak(days):
