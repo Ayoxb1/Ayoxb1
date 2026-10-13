@@ -1,0 +1,8 @@
+requests==2.32.3
+beautifulsoup4==4.12.3
+# Local photo preprocessing dependencies (not needed by daily GitHub Actions workflow):
+pillow
+numpy
+opencv-python
+rembg
+onnxruntime
