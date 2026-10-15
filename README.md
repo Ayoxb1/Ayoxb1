@@ -13,8 +13,27 @@
 <br>
 <br>
 
+
 <h3><code>ayoxb1@github ~ $ whoami</code></h3>
 
+<table>
+  <tr>
+    <td valign="top"><img src="./ayoub-ascii.svg" width="420" alt="Ayoub Atidi Belbaz — ASCII portrait" /></td>
+    <td valign="top"><img src="./info-card.svg" width="420" alt="Ayoub — Neofetch Info Card" /></td>
+  </tr>
+</table>
+
+<br>
+
+<blockquote align="left">
+  <b><i>"Chill guy who ships code 🥶"</i></b> — Desarrollador de apps, webs y todo reto técnico que me proponga.
+</blockquote>
+
+<ul align="left">
+  <li>💻 <b>Ingeniería de Software:</b> Estudiante de último año de DAM combinando fundamentos sólidos (Java, Concurrencia, SQL/XML) con tecnologías web modernas (Next.js, Supabase, Tailwind).</li>
+  <li>⚙️ <b>Automatización e IA:</b> Creando agentes y flujos inteligentes con n8n e integración de LLMs para resolver problemas reales.</li>
+  <li>📈 <b>Crecimiento constante:</b> Prototipado rápido, código limpio e iteración diaria.</li>
+</ul>
 <table>
   <tr>
     <td valign="top"><img src="./ayoub-ascii.svg" width="420" alt="Ayoub Atidi Belbaz — ASCII portrait" /></td>
@@ -27,7 +46,7 @@
 
 <h3><code>ayoxb1@github ~ $ ./links.sh</code></h3>
 
-<p><b>Full Stack Developer · DAM Software Engineer · High-Performance Web & 3D Interactive UI</b></p>
+<p><b>Full Stack Developer · Software Engineer · High-Performance Web & 3D Interactive UI</b></p>
 
 [![Portfolio](https://img.shields.io/badge/Portfolio-BatPortfolio-0d1117?style=for-the-badge&logo=vercel&logoColor=white)](https://github.com/Ayoxb1/BatPortfolio)
 [![GitHub](https://img.shields.io/badge/GitHub-Ayoxb1-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Ayoxb1)
