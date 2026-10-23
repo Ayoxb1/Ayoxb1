@@ -16,19 +16,6 @@
 
 <h3><code>ayoxb1@github ~ $ whoami</code></h3>
 
-<table>
-  <tr>
-    <td valign="top"><img src="./ayoub-ascii.svg" width="420" alt="Ayoub Atidi Belbaz — ASCII portrait" /></td>
-    <td valign="top"><img src="./info-card.svg" width="420" alt="Ayoub — Neofetch Info Card" /></td>
-  </tr>
-</table>
-
-<br>
-
-<blockquote align="left">
-  <b><i>"Chill guy who ships code 🥶"</i></b> — Desarrollador de apps, webs y todo reto técnico que me proponga.
-</blockquote>
-
 <ul align="left">
   <li>💻 <b>Ingeniería de Software:</b> Estudiante de último año de DAM combinando fundamentos sólidos (Java, Concurrencia, SQL/XML) con tecnologías web modernas (Next.js, Supabase, Tailwind).</li>
   <li>⚙️ <b>Automatización e IA:</b> Creando agentes y flujos inteligentes con n8n e integración de LLMs para resolver problemas reales.</li>
